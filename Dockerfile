@@ -5,12 +5,9 @@ ENV STAR_VERSION=2.5.2b
 ENV HTSEQ_VERSION=0.6.1p1
 ENV PYSAM_VERSION=0.9.0
 
-# add the EPEL yum repository
-RUN yum makecache fast && \
-    yum -y install epel-release
-
 # install the build dependencies
 RUN yum makecache fast && \
+    yum -y install epel-release && \
     yum -y install \
     make \
     gcc \
@@ -18,7 +15,8 @@ RUN yum makecache fast && \
     zlib-devel \
     python-devel \
     python-pip \
-    numpy
+    numpy \
+ && yum clean all
 
 # Download STAR sources tarball
 WORKDIR /usr/local/src
@@ -38,9 +36,6 @@ RUN pip install HTSeq==${HTSEQ_VERSION}
 
 # Install Pysam
 RUN pip install Pysam==${PYSAM_VERSION}
-
-# clean the yum cache
-RUN yum clean all
 
 ENTRYPOINT ["echo", "-e", "This container includes the following apps:\\n\
     STAR version ${STAR_VERSION} - https://github.com/alexdobin/STAR\\n\
